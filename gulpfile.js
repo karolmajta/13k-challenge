@@ -1,3 +1,4 @@
+var path = require('path');
 var gulp = require('gulp');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
@@ -6,8 +7,11 @@ var uglify = require('gulp-uglify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var browserify = require('browserify');
+var stringify = require('stringify');
 var connect = require('gulp-connect');
 
+console.log(path.join(__dirname, 'src', 'templates'));
+process.env.NODE_PATH = path.join(__dirname, 'src', 'templates');
 
 gulp.task('html', function() {
     gulp.src('./src/html/**/*.html')
@@ -20,6 +24,10 @@ gulp.task('browserify', function () {
     entries: './src/js/main.js',
     debug: true
   });
+  b.transform(stringify({
+      extensions: ['.html'],
+      minify: true
+  }));
 
   return b.bundle()
     .pipe(source('main.js'))
